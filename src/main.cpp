@@ -1,14 +1,22 @@
 #include <vector>
+
 // ----------------------------------------------------------------------------------------------------------
+
 #include <NetworkInterface.h>
 #include <Behaviors.h>
 #include <Actuator.h>
+
 // ----------------------------------------------------------------------------------------------------------
+
 std::vector<Actuator *> actuators;
 NetworkInterface network;
+
 // ----------------------------------------------------------------------------------------------------------
+
 void createActuators();
+
 // ----------------------------------------------------------------------------------------------------------
+
 void setup()
 {
     createActuators();
@@ -18,7 +26,9 @@ void setup()
     if (!network.connect())
         sleep(10);
 }
+
 // ------------------------------------------------
+
 void loop()
 {
     if (!network.isConnected())
@@ -27,7 +37,9 @@ void loop()
     for (Actuator *actuator : actuators)
         actuator->runBehavior();
 }
+
 // ----------------------------------------------------------------------------------------------------------
+
 void createActuators()
 {
     Actuator *pump = new Actuator(2, "Pump", "Water pump", false);
@@ -38,4 +50,5 @@ void createActuators()
     pump->setBehavior(pumpBehavior);
     actuators.push_back(pump);
 }
-// -----------------------------------------------------
+
+// ----------------------------------------------------------------------------------------------------------
