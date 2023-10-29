@@ -1,4 +1,7 @@
-Erro de permissão na porta ao fazer upload ESP32:
->`sudo chmod -R 777 /dev/ttyUSB0`
+If permission error is raised during the deployment to the board, paste the following in the terminal replacing `ttyUSB0` for the USP port the board is connected:
+
+```
+sudo chmod -R 777 /dev/ttyUSB0
+```
 
 
