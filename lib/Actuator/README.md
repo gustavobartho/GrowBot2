@@ -59,7 +59,7 @@ void setBehaviorState(BehaviorState state)
 Sets the state of the current behavior of the actuator.
 * `state`: The new behavior state. 
 
-##Example
+## Example
 
 ```cpp
 #include <Arduino.h>
