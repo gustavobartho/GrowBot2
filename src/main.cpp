@@ -21,7 +21,7 @@ void setup()
 {
     createActuators();
 
-    network.setDataSTA("GUSTAVO", "06071995");
+    network.setDataSTA("SSID", "PASSWORD");
 
     if (!network.connect())
         sleep(10);
@@ -42,7 +42,7 @@ void loop()
 
 void createActuators()
 {
-    Actuator *pump = new Actuator(2, "Pump", "Water pump", false);
+    Actuator *pump = new Actuator(25, "Pump", "Water pump", false);
     StepBehavior *pumpBehavior = new StepBehavior();
     pumpBehavior->addStep(2, BehaviorDurationUnit::SECONDS);
     pumpBehavior->addStep(5, BehaviorDurationUnit::SECONDS);
