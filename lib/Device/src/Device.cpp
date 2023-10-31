@@ -16,3 +16,18 @@ unsigned int Device::getPin() const
 {
     return this->pinNum;
 }
+
+String Device::getName() const
+{
+    return this->name;
+}
+
+String Device::getDescription() const
+{
+    return this->description;
+}
+
+bool Device::getNormallyClosed() const
+{
+    return this->normallyClosed;
+}

@@ -9,7 +9,7 @@
 
 class Actuator : public Device
 {
-private:
+public:
     Behavior *behavior;
 
 public:

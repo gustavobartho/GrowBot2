@@ -19,6 +19,9 @@ public:
     virtual ~Device() = default;
     void setPin(unsigned int pinNum);
     unsigned int getPin() const;
+    String getName() const;
+    String getDescription() const;
+    bool getNormallyClosed() const;
 };
 
 #endif

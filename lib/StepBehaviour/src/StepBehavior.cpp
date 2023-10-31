@@ -11,15 +11,12 @@ void StepBehavior::addStep(unsigned long duration, BehaviorDurationUnit unit)
 
 void StepBehavior::run(unsigned int pinNum, bool normallyClosed)
 {
-    Step &currentStep = steps[currentStepIndex];
-    unsigned long timeNow = millis();
-    unsigned long elapsedTime = getTimeDelta(timeNow);
-    unsigned long stepDurationInMillis = currentStep.duration * getMillisecondsFromDuration(currentStep.unit);
+    updateTimeSinceLastChange(millis());
 
-    if (elapsedTime >= stepDurationInMillis)
+    if (checkFinishedStep())
     {
         moveToNextStep(pinNum, normallyClosed);
-        timeLast = timeNow - (elapsedTime - stepDurationInMillis);
+        resetTimeSinceLastChange();
     }
 }
 
@@ -44,6 +41,24 @@ void StepBehavior::activate(unsigned int pinNum, bool normallyClosed)
         {
             this->turnOff(pinNum, normallyClosed);
         }
+    }
+}
+
+bool StepBehavior::checkFinishedStep()
+{
+    Step &currentStep = steps[currentStepIndex];
+    switch (currentStep.unit)
+    {
+    case BehaviorDurationUnit::SECONDS:
+        return timeSinceLastChange[3] >= currentStep.duration;
+    case BehaviorDurationUnit::MINUTES:
+        return timeSinceLastChange[2] >= currentStep.duration;
+    case BehaviorDurationUnit::HOURS:
+        return timeSinceLastChange[1] >= currentStep.duration;
+    case BehaviorDurationUnit::DAYS:
+        return timeSinceLastChange[0] >= currentStep.duration;
+    default:
+        return false;
     }
 }
 

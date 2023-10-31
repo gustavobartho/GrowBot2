@@ -27,6 +27,7 @@ public:
 
 private:
     void moveToNextStep(unsigned int pinNum, bool normallyClosed);
+    bool checkFinishedStep();
 };
 
 #endif

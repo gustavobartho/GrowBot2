@@ -34,8 +34,7 @@ class Behavior
 {
 protected:
     unsigned long timeLast;
-    double timeSinceLastChange;
-    BehaviorDurationUnit timeSinceLastChangeUnit;
+    double timeSinceLastChange[4];
     BehaviorState state;
     BehaviorType type;
     bool reversed;
@@ -44,22 +43,25 @@ protected:
 public:
     Behavior() = default;
     Behavior(BehaviorType type, bool reversed);
-    virtual ~Behavior() = default;
+    ~Behavior() = default;
     BehaviorState getState() const;
     BehaviorType getType() const;
     bool getReversed() const;
-    void setReversed(bool reversed, unsigned int pinNum);
-    void deactivate(unsigned int pinNum, bool normallyClosed);
-    virtual void run(unsigned int pinNum, bool normallyClosed) = 0;
-    virtual void activate(unsigned int pinNum, bool normallyClosed) = 0;
-    virtual void setState(BehaviorState newState) = 0;
+    String getTypeFormatted();
+    String getStateFormatted();
+    String getTimeSinceLastChangeFormatted();
 
 protected:
-    int getMillisecondsFromDuration(BehaviorDurationUnit durationUnit);
-    unsigned long getTimeDelta(unsigned long timeNow);
     void turnOn(unsigned int pinNum, bool normallyClosed);
     void turnOff(unsigned int pinNum, bool normallyClosed);
     void activateDefault(unsigned int pinNum, bool normallyClosed);
+    void setReversed(bool reversed, unsigned int pinNum);
+    void deactivate(unsigned int pinNum, bool normallyClosed);
+    void updateTimeSinceLastChange(unsigned long timeNow);
+    virtual void run(unsigned int pinNum, bool normallyClosed) = 0;
+    virtual void activate(unsigned int pinNum, bool normallyClosed) = 0;
+    virtual void setState(BehaviorState newState) = 0;
+    void resetTimeSinceLastChange();
 };
 
 #endif
