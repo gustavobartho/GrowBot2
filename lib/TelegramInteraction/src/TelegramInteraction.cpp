@@ -131,7 +131,7 @@ void TelegramInteraction::sendStatusMessage(String chatId, std::vector<Actuator 
     String message = "Status:\n\n";
 
     // light status
-    message += "ACTUATORS\n";
+    message += "ACTUATORS\n\n";
     for (Actuator *actuator : *actuators)
     {
         BehaviorStatusData behaviorData = actuator->behavior->getStatusData();
@@ -143,7 +143,7 @@ void TelegramInteraction::sendStatusMessage(String chatId, std::vector<Actuator 
         message += "- Behavior type: " + String(behaviorData.typeFormatted) + "\n";
         message += "- Behavior state: " + String(behaviorData.stateFormatted) + "\n";
         message += "- Behavior " + String(behaviorData.reversed ? "" : "not ") + "reversed\n";
-        message += "- " + behaviorData.timeSinceLastChangeFormatted + "since last change\n";
+        message += "- " + behaviorData.timeSinceLastChangeFormatted + " since last change\n";
         getActuatorSpecificStatusData(actuator, &message, &behaviorData);
         message += "\n";
     }

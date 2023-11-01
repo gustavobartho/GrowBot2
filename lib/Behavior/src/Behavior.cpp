@@ -70,15 +70,15 @@ String Behavior::getTimeSinceLastChangeFormatted() const
     String message = "";
 
     if (timeSinceLastChange[0] > 0)
-        message += String(timeSinceLastChange[0]) + "days ";
+        message += String(timeSinceLastChange[0]) + " days, ";
 
     if (timeSinceLastChange[1] > 0)
-        message += String(timeSinceLastChange[0]) + "hours ";
+        message += String(timeSinceLastChange[1]) + " hours, ";
 
     if (timeSinceLastChange[2] > 0)
-        message += String(timeSinceLastChange[0]) + "minutes ";
+        message += String(timeSinceLastChange[2]) + " minutes, ";
 
-    message += String(timeSinceLastChange[0]) + "seconds";
+    message += String(timeSinceLastChange[3]) + " seconds";
 
     return message;
 }

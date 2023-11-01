@@ -13,6 +13,8 @@ void NetworkInterface::setDataSTA(String ssid, String password)
 
     ssid = ssid;
     password = password;
+
+    WiFi.begin(ssid, password);
 }
 
 bool NetworkInterface::isConnected() const
@@ -23,6 +25,6 @@ bool NetworkInterface::isConnected() const
 bool NetworkInterface::connect()
 {
     // Connect to the network using the provided ssid and password.
-    wl_status_t status = WiFi.begin(ssid.c_str(), password.c_str());
+    wl_status_t status = WiFi.begin(ssid, password);
     return isConnected();
 }

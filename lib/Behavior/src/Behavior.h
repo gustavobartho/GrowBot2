@@ -46,7 +46,7 @@ class Behavior
 {
 protected:
     unsigned long timeLast;
-    double timeSinceLastChange[4];
+    int timeSinceLastChange[4];
     BehaviorState state;
     BehaviorType type;
     bool reversed;
