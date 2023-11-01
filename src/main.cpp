@@ -12,25 +12,25 @@
 // ----------------------------------------------------------------------------------------------------------
 
 std::vector<Actuator *> actuators;
-std::vector<Interaction *> interactions;
+Interactions interactions;
 NetworkInterface network;
 
 // ----------------------------------------------------------------------------------------------------------
 
 void createActuators();
-void createInteractions();
 
 // ----------------------------------------------------------------------------------------------------------
 
 void setup()
 {
     network.setDataSTA(WIFI_SSID, WIFI_PASSWORD);
-
     if (!network.connect())
         sleep(10);
 
+    TelegramInteraction *telegramInteraction = new TelegramInteraction(TELEGRAM_TOKEN, &network.client, TELEGRAM_OWNER_ID);
+    interactions.addInteraction(telegramInteraction);
+
     createActuators();
-    createInteractions();
 }
 
 // ------------------------------------------------
@@ -40,8 +40,7 @@ void loop()
     if (!network.isConnected())
         network.connect();
 
-    for (Interaction *interaction : interactions)
-        interaction->handleInteractions(&actuators);
+    interactions.handleInteractions(&actuators);
 
     for (Actuator *actuator : actuators)
         actuator->runBehavior();
@@ -66,9 +65,3 @@ void createActuators()
 }
 
 // ----------------------------------------------------------------------------------------------------------
-
-void createInteractions()
-{
-    TelegramInteraction *telegramInteraction = new TelegramInteraction(TELEGRAM_TOKEN, &network.client, TELEGRAM_OWNER_ID);
-    interactions.push_back(telegramInteraction);
-}
