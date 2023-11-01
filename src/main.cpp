@@ -24,12 +24,13 @@ void createInteractions();
 
 void setup()
 {
-    createActuators();
-    createInteractions();
     network.setDataSTA(WIFI_SSID, WIFI_PASSWORD);
 
     if (!network.connect())
         sleep(10);
+
+    createActuators();
+    createInteractions();
 }
 
 // ------------------------------------------------
@@ -52,11 +53,16 @@ void createActuators()
 {
     Actuator *pump = new Actuator(25, "Pump", "Water pump", false);
     StepBehavior *pumpBehavior = new StepBehavior();
-    pumpBehavior->addStep(3, BehaviorDurationUnit::MINUTES);
-    pumpBehavior->addStep(5, BehaviorDurationUnit::MINUTES);
-    pumpBehavior->addStep(3, BehaviorDurationUnit::MINUTES);
+    pumpBehavior->addStep(10, BehaviorDurationUnit::SECONDS);
+    pumpBehavior->addStep(1, BehaviorDurationUnit::MINUTES);
+    pumpBehavior->addStep(10, BehaviorDurationUnit::SECONDS);
     pump->setBehavior(pumpBehavior);
     actuators.push_back(pump);
+
+    Actuator *light = new Actuator(2, "Light", "LED Light", true);
+    OnOffBehavior *lightBehavior = new OnOffBehavior();
+    light->setBehavior(lightBehavior);
+    actuators.push_back(light);
 }
 
 // ----------------------------------------------------------------------------------------------------------

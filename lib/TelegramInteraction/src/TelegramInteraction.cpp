@@ -3,7 +3,10 @@
 TelegramInteraction::TelegramInteraction(String token, WiFiClientSecure *client, String ownerId)
     : Interaction(client),
       telegramBot(token, *this->client),
-      ownerId(ownerId) {}
+      ownerId(ownerId)
+{
+    telegramBot.sendMessage(ownerId, "-- Board activated --");
+}
 
 void TelegramInteraction::handleInteractions(std::vector<Actuator *> *actuators)
 {
