@@ -17,8 +17,7 @@ public:
     Interaction(WiFiClientSecure *client);
     ~Interaction() = default; // Add a destructor.
 
-    virtual void handleInputInteraction(std::vector<Actuator *> *actuators) = 0;
-    virtual void handleOutputInteractions() = 0;
+    virtual void handleInteractions(std::vector<Actuator *> *actuators) = 0;
 };
 
 #endif

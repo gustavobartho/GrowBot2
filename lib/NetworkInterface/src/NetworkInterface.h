@@ -7,9 +7,11 @@
 class NetworkInterface
 {
 private:
-    WiFiClientSecure client;
     String ssid;
     String password;
+
+public:
+    WiFiClientSecure client;
 
 public:
     NetworkInterface();

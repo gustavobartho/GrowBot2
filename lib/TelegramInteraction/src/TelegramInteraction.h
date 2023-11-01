@@ -39,7 +39,7 @@ public:
     TelegramInteraction(String token, WiFiClientSecure *client, String ownerId);
     ~TelegramInteraction() = default;
 
-    void handleInputInteraction(std::vector<Actuator *> *actuators) override;
+    void handleInteractions(std::vector<Actuator *> *actuators) override;
 
 private:
     void sendStatusMessage(String chatId, std::vector<Actuator *> *actuators);

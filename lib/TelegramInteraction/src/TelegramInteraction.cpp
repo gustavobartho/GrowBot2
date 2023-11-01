@@ -5,7 +5,7 @@ TelegramInteraction::TelegramInteraction(String token, WiFiClientSecure *client,
       telegramBot(token, *this->client),
       ownerId(ownerId) {}
 
-void TelegramInteraction::handleInputInteraction(std::vector<Actuator *> *actuators)
+void TelegramInteraction::handleInteractions(std::vector<Actuator *> *actuators)
 {
     if (WiFi.status() == WL_CONNECTED)
     {
