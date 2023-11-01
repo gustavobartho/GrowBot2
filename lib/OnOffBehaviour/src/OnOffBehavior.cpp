@@ -2,29 +2,50 @@
 
 OnOffBehavior::OnOffBehavior() : Behavior(BehaviorType::ON_OFF, false)
 {
-    this->state = BehaviorState::OFF;
-    this->previousState = this->state;
+    state = BehaviorState::OFF;
+    previousState = state;
 }
+
+// ---------------------------------------------
 
 void OnOffBehavior::activate(unsigned int pinNum, bool normallyClosed)
 {
-    this->activateDefault(pinNum, normallyClosed);
+    activateDefault(pinNum, normallyClosed);
 }
+
+// ---------------------------------------------
 
 void OnOffBehavior::run(unsigned int pinNum, bool normallyClosed)
 {
-    if (this->previousState != this->state)
-    {
-        if (this->state == BehaviorState::ON)
-            this->turnOn(pinNum, normallyClosed);
+    updateTimeSinceLastChange(millis());
 
-        else if (this->state == BehaviorState::OFF)
-            this->turnOff(pinNum, normallyClosed);
+    if (previousState != state)
+    {
+        if (state == BehaviorState::ON)
+            turnOn(pinNum, normallyClosed);
+
+        else if (state == BehaviorState::OFF)
+            turnOff(pinNum, normallyClosed);
+
+        resetTimeSinceLastChange();
     }
-    this->previousState = this->state;
+    previousState = state;
 }
+
+// ---------------------------------------------
 
 void OnOffBehavior::setState(BehaviorState newState)
 {
-    this->state = newState;
+    state = newState;
 }
+
+// ---------------------------------------------
+
+BehaviorStatusData OnOffBehavior::getStatusData()
+{
+    BehaviorStatusData data = {};
+    setStatusBaseData(&data);
+    return data;
+}
+
+// ---------------------------------------------

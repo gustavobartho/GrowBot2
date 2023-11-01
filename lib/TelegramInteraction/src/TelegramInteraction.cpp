@@ -1,6 +1,9 @@
 #include "TelegramInteraction.h"
 
-TelegramInteraction::TelegramInteraction(String token, WiFiClientSecure *client) : Interaction(client), telegramBot(token, *this->client) {}
+TelegramInteraction::TelegramInteraction(String token, WiFiClientSecure *client, String ownerId)
+    : Interaction(client),
+      telegramBot(token, *this->client),
+      ownerId(ownerId) {}
 
 void TelegramInteraction::handleInputInteraction(std::vector<Actuator *> *actuators)
 {
@@ -15,13 +18,14 @@ void TelegramInteraction::handleInputInteraction(std::vector<Actuator *> *actuat
                 String comando = telegramBot.messages[i].text;
                 String chatId = telegramBot.messages[i].chat_id;
 
-                if (chatId == TELEGRAM_OWNER_ID)
+                if (chatId == ownerId)
                 {
                     // general actuators and sensors status
                     if (comando.equalsIgnoreCase(commands.status))
                     {
-                        sendStatusInfo(chatId);
+                        sendStatusMessage(chatId, actuators);
                     }
+                    /*
                     else if (comando.equalsIgnoreCase(commands.photoperiod)) // Informa o fotoperíodo
                     {
                         telegramBot.sendMessage(chatId, getLightCycleName(photoperiod));
@@ -111,6 +115,7 @@ void TelegramInteraction::handleInputInteraction(std::vector<Actuator *> *actuat
                         changePowerSavingStatus(OFF);
                         sendPowerSavingStatus(chatId);
                     }
+                    */
                 }
             }
         }
@@ -126,18 +131,31 @@ void TelegramInteraction::sendStatusMessage(String chatId, std::vector<Actuator 
     message += "ACTUATORS\n";
     for (Actuator *actuator : *actuators)
     {
+        BehaviorStatusData behaviorData = actuator->behavior->getStatusData();
+
         message += "Pin: " + String(actuator->getPin()) + "\n";
         message += "- Name: " + String(actuator->getName()) + "\n";
         message += "- Description: " + String(actuator->getDescription()) + "\n";
         message += "- " + String(actuator->getNormallyClosed() ? "Normally closed" : "Normally open") + "\n";
-        message += "- Behavior type: " + String(actuator->behavior->getTypeFormatted()) + "\n";
-        message += "- Behavior state: " + String(actuator->behavior->getStateFormatted()) + "\n";
-        message += "- Behavior " + String(actuator->behavior->getReversed() ? "" : "not ") + "reversed\n";
-        message += "- " + actuator->behavior->getTimeSinceLastChangeFormatted() + "since last change\n";
-        // TODO: Create Function to Add specific type status info
-
+        message += "- Behavior type: " + String(behaviorData.typeFormatted) + "\n";
+        message += "- Behavior state: " + String(behaviorData.stateFormatted) + "\n";
+        message += "- Behavior " + String(behaviorData.reversed ? "" : "not ") + "reversed\n";
+        message += "- " + behaviorData.timeSinceLastChangeFormatted + "since last change\n";
+        getActuatorSpecificStatusData(actuator, &message, &behaviorData);
         message += "\n";
     }
 
     telegramBot.sendMessage(chatId, message);
+}
+
+void TelegramInteraction::getActuatorSpecificStatusData(Actuator *actuator, String *message, BehaviorStatusData *behaviorData)
+{
+    switch (actuator->behavior->getType())
+    {
+    case BehaviorType::STEP:
+        *message += "- Behavior step: " + String(behaviorData->step) + '\n';
+        break;
+    default:
+        break;
+    }
 }

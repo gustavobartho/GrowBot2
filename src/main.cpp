@@ -7,11 +7,14 @@
 #include <Interactions.h>
 #include <Actuator.h>
 
+#include "personal_info.h"
+
 // ----------------------------------------------------------------------------------------------------------
 
 std::vector<Actuator *> actuators;
 std::vector<Interaction *> interactions;
 NetworkInterface network;
+
 
 // ----------------------------------------------------------------------------------------------------------
 
@@ -37,7 +40,7 @@ void loop()
         network.connect();
 
     for (Interaction *interaction : interactions)
-        handleInputInteraction(&actuators);
+        interaction->handleInputInteraction(&actuators);
 
     for (Actuator *actuator : actuators)
         actuator->runBehavior();

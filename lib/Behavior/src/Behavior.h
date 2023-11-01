@@ -30,6 +30,18 @@ struct BehaviorStepDuration
     BehaviorDurationUnit unit;
 };
 
+struct BehaviorStatusData
+{
+    BehaviorState state;
+    BehaviorType type;
+    bool reversed;
+    unsigned int step = 0;
+
+    String typeFormatted;
+    String stateFormatted;
+    String timeSinceLastChangeFormatted;
+};
+
 class Behavior
 {
 protected:
@@ -44,12 +56,18 @@ public:
     Behavior() = default;
     Behavior(BehaviorType type, bool reversed);
     ~Behavior() = default;
+
+    virtual void activate(unsigned int pinNum, bool normallyClosed) = 0;
+    virtual void run(unsigned int pinNum, bool normallyClosed) = 0;
+    virtual void setState(BehaviorState newState) = 0;
+    virtual BehaviorStatusData getStatusData() = 0;
+
     BehaviorState getState() const;
     BehaviorType getType() const;
     bool getReversed() const;
-    String getTypeFormatted();
-    String getStateFormatted();
-    String getTimeSinceLastChangeFormatted();
+    String getTypeFormatted() const;
+    String getStateFormatted() const;
+    String getTimeSinceLastChangeFormatted() const;
 
 protected:
     void turnOn(unsigned int pinNum, bool normallyClosed);
@@ -58,10 +76,8 @@ protected:
     void setReversed(bool reversed, unsigned int pinNum);
     void deactivate(unsigned int pinNum, bool normallyClosed);
     void updateTimeSinceLastChange(unsigned long timeNow);
-    virtual void run(unsigned int pinNum, bool normallyClosed) = 0;
-    virtual void activate(unsigned int pinNum, bool normallyClosed) = 0;
-    virtual void setState(BehaviorState newState) = 0;
     void resetTimeSinceLastChange();
+    void setStatusBaseData(BehaviorStatusData *data);
 };
 
 #endif

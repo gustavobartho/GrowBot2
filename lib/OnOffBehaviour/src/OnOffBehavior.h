@@ -13,6 +13,7 @@ public:
     void run(unsigned int pinNum, bool normallyClosed) override;
     void activate(unsigned int pinNum, bool normallyClosed) override;
     void setState(BehaviorState newState) override;
+    BehaviorStatusData getStatusData() override;
 };
 
 #endif

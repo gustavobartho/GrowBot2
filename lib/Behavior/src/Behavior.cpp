@@ -1,33 +1,89 @@
 #include "Behavior.h"
 
-Behavior::Behavior(BehaviorType type, bool reversed)
-    : timeLast(millis()),
-      timeSinceLastChange({0, 0, 0, 0}),
-      state(BehaviorState::OFF),
-      type(type),
-      reversed(reversed),
-      active(true) {}
+Behavior::Behavior(BehaviorType type, bool reversed) : state(BehaviorState::OFF), type(type), reversed(reversed)
+{
+    active = true;
+    resetTimeSinceLastChange();
+}
+
+// ---------------------------------------------
 
 BehaviorState Behavior::getState() const
 {
-    if (reversed && state == BehaviorState::ON)
+    if (reversed && (state == BehaviorState::ON))
         return BehaviorState::OFF;
 
-    if (reversed && state == BehaviorState::OFF)
+    if (reversed && (state == BehaviorState::OFF))
         return BehaviorState::ON;
 
     return state;
 }
+
+// ---------------------------------------------
 
 BehaviorType Behavior::getType() const
 {
     return type;
 }
 
+// ---------------------------------------------
+
 bool Behavior::getReversed() const
 {
     return reversed;
 }
+
+// ---------------------------------------------
+
+String Behavior::getTypeFormatted() const
+{
+    switch (getType())
+    {
+    case BehaviorType::ON_OFF:
+        return String("ON-OFF");
+    case BehaviorType::STEP:
+        return String("STEP");
+    default:
+        return String("UNKNOWN");
+    }
+}
+
+// ---------------------------------------------
+
+String Behavior::getStateFormatted() const
+{
+    switch (getState())
+    {
+    case BehaviorState::ON:
+        return String("ON");
+    case BehaviorState::OFF:
+        return String("OFF");
+    default:
+        return String("UNKNOWN");
+    }
+}
+
+// ---------------------------------------------
+
+String Behavior::getTimeSinceLastChangeFormatted() const
+{
+    String message = "";
+
+    if (timeSinceLastChange[0] > 0)
+        message += String(timeSinceLastChange[0]) + "days ";
+
+    if (timeSinceLastChange[1] > 0)
+        message += String(timeSinceLastChange[0]) + "hours ";
+
+    if (timeSinceLastChange[2] > 0)
+        message += String(timeSinceLastChange[0]) + "minutes ";
+
+    message += String(timeSinceLastChange[0]) + "seconds";
+
+    return message;
+}
+
+// ---------------------------------------------
 
 void Behavior::setReversed(bool reversed, unsigned int pinNum)
 {
@@ -39,9 +95,12 @@ void Behavior::setReversed(bool reversed, unsigned int pinNum)
     }
 }
 
+// ---------------------------------------------
+
 void Behavior::updateTimeSinceLastChange(unsigned long timeNow)
 {
     unsigned long timeDelta = timeNow - timeLast;
+
     // Handle counter overflow
     if (timeLast > timeNow)
     {
@@ -74,12 +133,18 @@ void Behavior::updateTimeSinceLastChange(unsigned long timeNow)
     }
 }
 
+// ---------------------------------------------
+
 void Behavior::resetTimeSinceLastChange()
 {
     timeLast = millis();
-    for (int i = 0; i < sizeof(timeSinceLastChange); i++)
+    for (int i = 0; i <= 3; i++)
+    {
         timeSinceLastChange[i] = 0;
+    }
 }
+
+// ---------------------------------------------
 
 void Behavior::activateDefault(unsigned int pinNum, bool normallyClosed)
 {
@@ -87,8 +152,10 @@ void Behavior::activateDefault(unsigned int pinNum, bool normallyClosed)
     active = true;
     state = reversed ? BehaviorState::ON : BehaviorState::OFF;
     resetTimeSinceLastChange();
-    digitalWrite(pinNum, reversed != normallyClosed ? HIGH : LOW);
+    turnOff(pinNum, normallyClosed);
 }
+
+// ---------------------------------------------
 
 void Behavior::deactivate(unsigned int pinNum, bool normallyClosed)
 {
@@ -96,8 +163,10 @@ void Behavior::deactivate(unsigned int pinNum, bool normallyClosed)
     active = false;
     state = BehaviorState::OFF;
     resetTimeSinceLastChange();
-    digitalWrite(pinNum, normallyClosed ? HIGH : LOW);
+    turnOff(pinNum, normallyClosed);
 }
+
+// ---------------------------------------------
 
 void Behavior::turnOn(unsigned int pinNum, bool normallyClosed)
 {
@@ -105,51 +174,25 @@ void Behavior::turnOn(unsigned int pinNum, bool normallyClosed)
     digitalWrite(pinNum, (normallyClosed != reversed) ? LOW : HIGH);
 }
 
+// ---------------------------------------------
+
 void Behavior::turnOff(unsigned int pinNum, bool normallyClosed)
 {
     digitalWrite(pinNum, (normallyClosed != reversed) ? HIGH : LOW);
 }
 
-String Behavior::getTypeFormatted()
+// ---------------------------------------------
+
+void Behavior::setStatusBaseData(BehaviorStatusData *data)
 {
-    switch (this->type)
-    {
-    case BehaviorType::ON_OFF:
-        return String("ON-OFF");
-    case BehaviorType::STEP:
-        return String('STEP');
-    default:
-        return String("UNKNOWN");
-    }
+    data->reversed = getReversed();
+    data->state = getState();
+    data->type = getType();
+    data->reversed = getReversed();
+
+    data->typeFormatted = getTypeFormatted();
+    data->stateFormatted = getStateFormatted();
+    data->timeSinceLastChangeFormatted = getTimeSinceLastChangeFormatted();
 }
 
-String Behavior::getStateFormatted()
-{
-    switch (this->state)
-    {
-    case BehaviorState::ON:
-        return String("ON");
-    case BehaviorState::OFF:
-        return String("OFF");
-    default:
-        return String("UNKNOWN");
-    }
-}
-
-String Behavior::getTimeSinceLastChangeFormatted()
-{
-    String message = "";
-
-    if (timeSinceLastChange[0] > 0)
-        message += String(timeSinceLastChange[0]) + "days ";
-
-    if (timeSinceLastChange[1] > 0)
-        message += String(timeSinceLastChange[0]) + "hours ";
-
-    if (timeSinceLastChange[2] > 0)
-        message += String(timeSinceLastChange[0]) + "minutes ";
-
-    message += String(timeSinceLastChange[0]) + "seconds";
-
-    return message;
-}
+// ---------------------------------------------
