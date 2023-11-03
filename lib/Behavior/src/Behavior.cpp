@@ -100,7 +100,6 @@ void Behavior::setReversed(bool reversed, unsigned int pinNum)
 void Behavior::updateTimeSinceLastChange(unsigned long timeNow)
 {
     unsigned long timeDelta = timeNow - timeLast;
-
     // Handle counter overflow
     if (timeLast > timeNow)
     {
@@ -110,26 +109,28 @@ void Behavior::updateTimeSinceLastChange(unsigned long timeNow)
 
     if (timeDelta >= 1000)
     {
-        timeSinceLastChange[3] += 1;
-        timeLast = timeNow - (timeDelta - 1000);
+        int elapsedSeconds = timeDelta / 1000;
+        int remainingMillis = timeDelta % 1000;
+        timeSinceLastChange[3] += elapsedSeconds;
+        timeLast = timeNow - remainingMillis;
     }
 
     if (timeSinceLastChange[3] >= 60)
     {
-        timeSinceLastChange[3] = 0;
-        timeSinceLastChange[2] += 1;
+        timeSinceLastChange[3] -= 60;
+        timeSinceLastChange[2]++;
     }
 
     if (timeSinceLastChange[2] >= 60)
     {
-        timeSinceLastChange[2] = 0;
-        timeSinceLastChange[1] += 1;
+        timeSinceLastChange[2] -= 60;
+        timeSinceLastChange[1]++;
     }
 
     if (timeSinceLastChange[1] >= 24)
     {
-        timeSinceLastChange[1] = 0;
-        timeSinceLastChange[0] += 1;
+        timeSinceLastChange[1] -= 24;
+        timeSinceLastChange[0]++;
     }
 }
 
@@ -189,7 +190,6 @@ void Behavior::setStatusBaseData(BehaviorStatusData *data)
     data->state = getState();
     data->type = getType();
     data->reversed = getReversed();
-
     data->typeFormatted = getTypeFormatted();
     data->stateFormatted = getStateFormatted();
     data->timeSinceLastChangeFormatted = getTimeSinceLastChangeFormatted();

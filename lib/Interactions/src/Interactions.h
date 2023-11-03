@@ -17,6 +17,7 @@ public:
 
     void addInteraction(Interaction *interaction);
     void handleInteractions(std::vector<Actuator *> *actuators);
+    void createInteractions(WiFiClientSecure *client);
 };
 
 #endif

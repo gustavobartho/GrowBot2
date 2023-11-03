@@ -3,6 +3,7 @@
 
 #include <UniversalTelegramBot.h>
 #include "Interaction.h"
+#include "telegram_info.h"
 
 struct TelegramCommands
 {
@@ -36,14 +37,14 @@ private:
     String ownerId;
 
 public:
-    TelegramInteraction(String token, WiFiClientSecure *client, String ownerId);
+    TelegramInteraction(WiFiClientSecure *client);
     ~TelegramInteraction() = default;
 
     void handleInteractions(std::vector<Actuator *> *actuators) override;
 
 private:
     void sendStatusMessage(String chatId, std::vector<Actuator *> *actuators);
-    void getActuatorSpecificStatusData(Actuator *actuator, String *message, BehaviorStatusData *behaviorData);
+    void getActuatorsStatusMessage(String chatId, std::vector<Actuator *> *actuators, String *message);
 };
 
 #endif

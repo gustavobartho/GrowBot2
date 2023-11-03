@@ -1,9 +1,9 @@
 #include "TelegramInteraction.h"
 
-TelegramInteraction::TelegramInteraction(String token, WiFiClientSecure *client, String ownerId)
+TelegramInteraction::TelegramInteraction(WiFiClientSecure *client)
     : Interaction(client),
-      telegramBot(token, *this->client),
-      ownerId(ownerId)
+      telegramBot(TELEGRAM_TOKEN, *this->client),
+      ownerId(TELEGRAM_OWNER_ID)
 {
     telegramBot.sendMessage(ownerId, "-- Board activated --");
 }
@@ -29,42 +29,6 @@ void TelegramInteraction::handleInteractions(std::vector<Actuator *> *actuators)
                         sendStatusMessage(chatId, actuators);
                     }
                     /*
-                    else if (comando.equalsIgnoreCase(commands.photoperiod)) // Informa o fotoperíodo
-                    {
-                        telegramBot.sendMessage(chatId, getLightCycleName(photoperiod));
-                    }
-                    else if (comando.equalsIgnoreCase(commands.irrigation)) // Informa o status da irrigação
-                    {
-                        sendIrrigationStatusMessage(chatId, true, autoIrrigationStatus == ON);
-                    }
-                    else if (comando.equalsIgnoreCase(commands.irrigate)) // Realiza uma irrigação
-                    {
-                        irrigate(chatId);
-                        sendIrrigationStatusMessage(chatId, false);
-                    }
-                    else if (comando.equalsIgnoreCase(commands.irrigated)) // Registra uma irrigação manual
-                    {
-                        registerIrrigation(chatId);
-                        sendIrrigationStatusMessage(chatId, false);
-                    }
-                    else if (comando.indexOf(commands.irrigationInterval) >= 0) // Muda o intervalo entre irrigações
-                    {
-                        updateIrrigationInterval(comando, chatId);
-                    }
-                    else if (comando.indexOf(commands.irrigationTime) >= 0) // Muda o tempo de uma irrigação
-                    {
-                        updateIrrigationTime(comando, chatId);
-                    }
-                    else if (comando.equalsIgnoreCase(commands.autoIrrigationOn) && autoIrrigationStatus != ON) // Liga a auto-irrigação
-                    {
-                        changeAutoIrrigationState(chatId, ON);
-                        sendIrrigationStatusMessage(chatId, true, autoIrrigationStatus == ON);
-                    }
-                    else if (comando.equalsIgnoreCase(commands.autoIrrigationOff) && autoIrrigationStatus != OFF) // Desliga a auto-irrigação
-                    {
-                        changeAutoIrrigationState(chatId, OFF);
-                        sendIrrigationStatusMessage(chatId, true, autoIrrigationStatus == ON);
-                    }
                     else if (comando.equalsIgnoreCase(commands.veg) && photoperiod != VEG) // Muda para o fotoperíodo de vegetativo
                     {
                         changePhotoperiod(chatId, VEG);
@@ -130,35 +94,33 @@ void TelegramInteraction::sendStatusMessage(String chatId, std::vector<Actuator 
 {
     String message = "Status:\n\n";
 
-    // light status
+    // Actuators Status
     message += "ACTUATORS\n\n";
-    for (Actuator *actuator : *actuators)
-    {
-        BehaviorStatusData behaviorData = actuator->behavior->getStatusData();
-
-        message += "Pin: " + String(actuator->getPin()) + "\n";
-        message += "- Name: " + String(actuator->getName()) + "\n";
-        message += "- Description: " + String(actuator->getDescription()) + "\n";
-        message += "- " + String(actuator->getNormallyClosed() ? "Normally closed" : "Normally open") + "\n";
-        message += "- Behavior type: " + String(behaviorData.typeFormatted) + "\n";
-        message += "- Behavior state: " + String(behaviorData.stateFormatted) + "\n";
-        message += "- Behavior " + String(behaviorData.reversed ? "" : "not ") + "reversed\n";
-        message += "- " + behaviorData.timeSinceLastChangeFormatted + " since last change\n";
-        getActuatorSpecificStatusData(actuator, &message, &behaviorData);
-        message += "\n";
-    }
+    getActuatorsStatusMessage(chatId, actuators, &message);
+    message += "\n";
 
     telegramBot.sendMessage(chatId, message);
 }
 
-void TelegramInteraction::getActuatorSpecificStatusData(Actuator *actuator, String *message, BehaviorStatusData *behaviorData)
+void TelegramInteraction::getActuatorsStatusMessage(String chatId, std::vector<Actuator *> *actuators, String *message)
 {
-    switch (actuator->behavior->getType())
+    for (Actuator *actuator : *actuators)
     {
-    case BehaviorType::STEP:
-        *message += "- Behavior step: " + String(behaviorData->step) + '\n';
-        break;
-    default:
-        break;
+        // Set behavior general data
+        BehaviorStatusData behaviorData = actuator->behavior->getStatusData();
+        *message += "Pin: " + String(actuator->getPin()) + "\n";
+        *message += "- Name: " + String(actuator->getName()) + "\n";
+        *message += "- Description: " + String(actuator->getDescription()) + "\n";
+        *message += "- " + String(actuator->getNormallyClosed() ? "Normally closed" : "Normally open") + "\n";
+        *message += "- Behavior type: " + String(behaviorData.typeFormatted) + "\n";
+        *message += "- Behavior state: " + String(behaviorData.stateFormatted) + "\n";
+        *message += "- Behavior " + String(behaviorData.reversed ? "" : "not ") + "reversed\n";
+        *message += "- " + behaviorData.timeSinceLastChangeFormatted + " since last change\n";
+
+        // Set specific Behavior data
+        if (actuator->behavior->getType() == BehaviorType::STEP)
+        {
+            *message += "- Behavior step: " + String(behaviorData.step) + '\n';
+        }
     }
 }
