@@ -4,3 +4,5 @@
 include/*
 !include/README.md
 
+lib/TelegramInteraction/src/telegram_info.h
+
