@@ -44,9 +44,10 @@ void createActuators()
 {
     Actuator *pump = new Actuator(2, "Pump", "Water pump", false);
     StepBehavior *pumpBehavior = new StepBehavior();
-    pumpBehavior->addStep(2, BehaviorDurationUnit::SECONDS);
-    pumpBehavior->addStep(5, BehaviorDurationUnit::SECONDS);
-    pumpBehavior->addStep(2, BehaviorDurationUnit::SECONDS);
+    pumpBehavior->addStep(15, BehaviorDurationUnit::SECONDS);
+    pumpBehavior->addStep(1, BehaviorDurationUnit::MINUTES);
+    pumpBehavior->addStep(30, BehaviorDurationUnit::SECONDS);
+    pumpBehavior->addStep(15, BehaviorDurationUnit::SECONDS);    
     pump->setBehavior(pumpBehavior);
     actuators.push_back(pump);
 }
