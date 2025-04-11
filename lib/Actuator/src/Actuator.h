@@ -19,6 +19,9 @@ public:
     void setBehavior(Behavior *behavior);
     void runBehavior();
     void setBehaviorState(BehaviorState state);
+
+    void setup() override;
+    void update() override;
 };
 
 #endif

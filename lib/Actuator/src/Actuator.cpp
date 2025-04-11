@@ -24,7 +24,7 @@ void Actuator::setBehavior(Behavior *newBehavior)
 
 void Actuator::runBehavior()
 {
-    if (behavior)
+    if (behavior && isEnabled())
     {
         behavior->run(getPin(), normallyClosed);
     }
@@ -35,5 +35,26 @@ void Actuator::setBehaviorState(BehaviorState state)
     if (behavior)
     {
         behavior->setState(state);
+    }
+}
+
+void Actuator::setup()
+{
+    // Call parent setup first
+    Device::setup();
+
+    // Initialize behavior if exists
+    if (behavior)
+    {
+        behavior->activate(getPin(), normallyClosed);
+    }
+}
+
+void Actuator::update()
+{
+    // Run the behavior if device is enabled
+    if (isEnabled())
+    {
+        runBehavior();
     }
 }

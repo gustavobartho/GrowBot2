@@ -13,7 +13,8 @@ enum class BehaviorState
 enum class BehaviorType
 {
     ON_OFF,
-    STEP
+    STEP,
+    INPUT_BOUND
 };
 
 enum class BehaviorDurationUnit
